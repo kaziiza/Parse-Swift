@@ -172,9 +172,4 @@ public extension ParseUser {
     static var keycloak: ParseKeycloak<Self> {
         ParseKeycloak<Self>()
     }
-
-    /// A Keycloak `ParseUser`.
-    var keycloak: ParseKeycloak<Self> {
-        Self.keycloak
-    }
 }

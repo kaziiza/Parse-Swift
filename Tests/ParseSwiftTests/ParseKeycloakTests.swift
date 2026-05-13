@@ -146,7 +146,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         serverResponse.password = "world"
         serverResponse.objectId = "yarr"
         serverResponse.sessionToken = "myToken"
-        serverResponse.authData = [serverResponse.keycloak.__type: authData]
+        serverResponse.authData = [User.keycloak.__type: authData]
         serverResponse.createdAt = Date()
         serverResponse.updatedAt = serverResponse.createdAt?.addingTimeInterval(+300)
 
@@ -171,7 +171,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(user, userOnServer)
         XCTAssertEqual(user.username, "hello")
         XCTAssertEqual(user.password, "world")
-        XCTAssertTrue(user.keycloak.isLinked)
+        XCTAssertTrue(User.keycloak.isLinked(with: user))
     }
 
     @MainActor
@@ -186,7 +186,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         serverResponse.password = "world"
         serverResponse.objectId = "yarr"
         serverResponse.sessionToken = "myToken"
-        serverResponse.authData = [serverResponse.keycloak.__type: authData]
+        serverResponse.authData = [User.keycloak.__type: authData]
         serverResponse.createdAt = Date()
         serverResponse.updatedAt = serverResponse.createdAt?.addingTimeInterval(+300)
 
@@ -210,7 +210,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(user, userOnServer)
         XCTAssertEqual(user.username, "hello")
         XCTAssertEqual(user.password, "world")
-        XCTAssertTrue(user.keycloak.isLinked)
+        XCTAssertTrue(User.keycloak.isLinked(with: user))
     }
 
     @MainActor
@@ -260,7 +260,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(user.updatedAt, userOnServer.updatedAt)
         XCTAssertEqual(user.username, "hello10")
         XCTAssertNil(user.password)
-        XCTAssertTrue(user.keycloak.isLinked)
+        XCTAssertTrue(User.keycloak.isLinked(with: user))
         XCTAssertFalse(user.anonymous.isLinked)
     }
 
@@ -299,7 +299,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(user.updatedAt, userOnServer.updatedAt)
         XCTAssertEqual(user.username, "hello10")
         XCTAssertNil(user.password)
-        XCTAssertTrue(user.keycloak.isLinked)
+        XCTAssertTrue(User.keycloak.isLinked(with: user))
         XCTAssertFalse(user.anonymous.isLinked)
     }
 
@@ -356,7 +356,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(user.updatedAt, userOnServer.updatedAt)
         XCTAssertEqual(user.username, "hello10")
         XCTAssertNil(user.password)
-        XCTAssertFalse(user.keycloak.isLinked)
+        XCTAssertFalse(User.keycloak.isLinked(with: user))
     }
 #endif
 }
