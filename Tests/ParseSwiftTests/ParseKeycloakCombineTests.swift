@@ -15,6 +15,7 @@ import Combine
 
 class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_body_length
 
+    /// Minimal user model used by the Combine Keycloak authentication tests.
     struct User: ParseUser {
 
         //: These are required by ParseObject
@@ -32,6 +33,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         var authData: [String: [String: String]?]?
     }
 
+    /// Mock login response that mirrors the server payload returned by Parse.
     struct LoginSignupResponse: ParseUser {
 
         var objectId: String?
@@ -51,6 +53,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         // Your custom keys
         var customKey: String?
 
+        /// Creates a populated response used by mocked login and link requests.
         init() {
             let date = Date()
             self.createdAt = date
@@ -64,6 +67,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         }
     }
 
+    /// Configures ParseSwift with the local test server before each test.
     override func setUpWithError() throws {
         try super.setUpWithError()
         guard let url = URL(string: "http://localhost:1337/1") else {
@@ -77,6 +81,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
                               testing: true)
     }
 
+    /// Clears mocked network handlers and persisted Parse state after each test.
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         MockURLProtocol.removeAll()
@@ -86,6 +91,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         try ParseStorage.shared.deleteAll()
     }
 
+    /// Logs in a baseline user for link and unlink publisher coverage.
     func loginNormally() throws -> User {
         let loginResponse = LoginSignupResponse()
 
@@ -100,6 +106,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         return try User.login(username: "parse", password: "user")
     }
 
+    /// Verifies the Keycloak login publisher with id and access token credentials.
     func testLogin() {
         var subscriptions = Set<AnyCancellable>()
         let expectation1 = XCTestExpectation(description: "Save")
@@ -153,6 +160,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         wait(for: [expectation1], timeout: 20.0)
     }
 
+    /// Verifies the Keycloak login publisher with a prepared authData dictionary.
     func testLoginAuthData() {
         var subscriptions = Set<AnyCancellable>()
         let expectation1 = XCTestExpectation(description: "Save")
@@ -205,6 +213,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         wait(for: [expectation1], timeout: 20.0)
     }
 
+    /// Verifies the Keycloak link publisher with id and access token credentials.
     func testLink() throws {
         var subscriptions = Set<AnyCancellable>()
         let expectation1 = XCTestExpectation(description: "Save")
@@ -251,6 +260,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         wait(for: [expectation1], timeout: 20.0)
     }
 
+    /// Verifies the Keycloak link publisher with a prepared authData dictionary.
     func testLinkAuthData() throws {
         var subscriptions = Set<AnyCancellable>()
         let expectation1 = XCTestExpectation(description: "Save")
@@ -300,6 +310,7 @@ class ParseKeycloakCombineTests: XCTestCase { // swiftlint:disable:this type_bod
         wait(for: [expectation1], timeout: 20.0)
     }
 
+    /// Verifies the Keycloak unlink publisher removes the provider from the current user.
     func testUnlink() throws {
         var subscriptions = Set<AnyCancellable>()
         let expectation1 = XCTestExpectation(description: "Save")

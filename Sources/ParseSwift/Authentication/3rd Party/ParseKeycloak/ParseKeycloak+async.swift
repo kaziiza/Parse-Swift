@@ -34,6 +34,7 @@ public extension ParseKeycloak {
     /**
      Login a `ParseUser` *asynchronously* using Keycloak authentication.
      - parameter authData: Dictionary containing key/values.
+     - parameter options: A set of header options sent to the server. Defaults to an empty set.
      - returns: An instance of the logged in `ParseUser`.
      - throws: An error of type `ParseError`.
      */

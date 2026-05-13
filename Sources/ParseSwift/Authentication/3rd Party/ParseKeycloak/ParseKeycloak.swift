@@ -53,10 +53,12 @@ public struct ParseKeycloak<AuthenticatedUser: ParseUser>: ParseAuthentication {
         }
     }
 
+    /// The Parse Server authData provider type for Keycloak.
     public static var __type: String { // swiftlint:disable:this identifier_name
         "keycloak"
     }
 
+    /// Creates a Keycloak authentication helper.
     public init() { }
 }
 
@@ -86,6 +88,13 @@ public extension ParseKeycloak {
               completion: completion)
     }
 
+    /**
+     Login a `ParseUser` *asynchronously* using Keycloak authData.
+     - parameter authData: Dictionary containing the required Keycloak key/values.
+     - parameter options: A set of header options sent to the server. Defaults to an empty set.
+     - parameter callbackQueue: The queue to return to after completion. Default value of .main.
+     - parameter completion: The block to execute.
+     */
     func login(authData: [String: String],
                options: API.Options = [],
                callbackQueue: DispatchQueue = .main,
@@ -130,6 +139,13 @@ public extension ParseKeycloak {
              completion: completion)
     }
 
+    /**
+     Link the *current* `ParseUser` *asynchronously* using Keycloak authData.
+     - parameter authData: Dictionary containing the required Keycloak key/values.
+     - parameter options: A set of header options sent to the server. Defaults to an empty set.
+     - parameter callbackQueue: The queue to return to after completion. Default value of .main.
+     - parameter completion: The block to execute.
+     */
     func link(authData: [String: String],
               options: API.Options = [],
               callbackQueue: DispatchQueue = .main,

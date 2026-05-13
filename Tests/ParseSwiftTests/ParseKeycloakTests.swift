@@ -14,6 +14,7 @@ import XCTest
 @testable import ParseSwift
 
 class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_length
+    /// Minimal user model used by the Keycloak authentication tests.
     struct User: ParseUser {
 
         //: These are required by ParseObject
@@ -31,6 +32,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         var authData: [String: [String: String]?]?
     }
 
+    /// Mock login response that mirrors the server payload returned by Parse.
     struct LoginSignupResponse: ParseUser {
 
         var objectId: String?
@@ -50,6 +52,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         // Your custom keys
         var customKey: String?
 
+        /// Creates a populated response used by mocked login and link requests.
         init() {
             let date = Date()
             self.createdAt = date
@@ -63,6 +66,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         }
     }
 
+    /// Configures ParseSwift with the local test server before each test.
     override func setUpWithError() throws {
         try super.setUpWithError()
         guard let url = URL(string: "http://localhost:1337/1") else {
@@ -76,6 +80,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
                               testing: true)
     }
 
+    /// Clears mocked network handlers and persisted Parse state after each test.
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         MockURLProtocol.removeAll()
@@ -85,6 +90,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         try ParseStorage.shared.deleteAll()
     }
 
+    /// Logs in a baseline user for link and unlink test coverage.
     func loginNormally() throws -> User {
         let loginResponse = LoginSignupResponse()
 
@@ -99,6 +105,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         return try User.login(username: "parse", password: "user")
     }
 
+    /// Verifies the Keycloak authData dictionary uses the expected server keys.
     func testAuthenticationKeys() throws {
         let authData = ParseKeycloak<User>
             .AuthenticationKeys.id.makeDictionary(id: "testing",
@@ -106,6 +113,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
         XCTAssertEqual(authData, ["id": "testing", "access_token": "that"])
     }
 
+    /// Verifies Keycloak authData validation rejects missing mandatory keys.
     func testVerifyMandatoryKeys() throws {
         let authData = ["id": "testing", "access_token": "this"]
         let authDataIdOnly = ["id": "testing"]
@@ -127,6 +135,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
 
 #if compiler(>=5.5.2) && canImport(_Concurrency)
     @MainActor
+    /// Verifies async Keycloak login with id and access token credentials.
     func testLogin() async throws {
 
         var serverResponse = LoginSignupResponse()
@@ -166,6 +175,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak login with a prepared authData dictionary.
     func testLoginAuthData() async throws {
 
         var serverResponse = LoginSignupResponse()
@@ -204,6 +214,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak login rejects malformed authData.
     func testLoginAuthDataBadAuth() async throws {
         do {
             _ = try await User.keycloak.login(authData: ["id": "testing",
@@ -219,6 +230,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak linking with id and access token credentials.
     func testLink() async throws {
 
         _ = try loginNormally()
@@ -253,6 +265,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak linking with a prepared authData dictionary.
     func testLinkLoggedInAuthData() async throws {
 
         _ = try loginNormally()
@@ -291,6 +304,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak linking rejects malformed authData.
     func testLinkLoggedInUserWrongKeys() async throws {
         _ = try loginNormally()
         MockURLProtocol.removeAll()
@@ -307,6 +321,7 @@ class ParseKeycloakTests: XCTestCase { // swiftlint:disable:this type_body_lengt
     }
 
     @MainActor
+    /// Verifies async Keycloak unlink removes the provider from the current user.
     func testUnlink() async throws {
 
         _ = try loginNormally()
